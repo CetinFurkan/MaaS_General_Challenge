@@ -20,7 +20,7 @@ public:
     int pointsSize();
 
 private:
-    std::vector<Point> plist; //List of points of polygon boundry!
+    std::vector<Point> plist_; //List of points of polygon boundry!
 };
 
 #endif //_POLYGON_
