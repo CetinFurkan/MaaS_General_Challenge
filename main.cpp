@@ -7,13 +7,15 @@
 // JSON Parser library by Neils Lohmann: https://github.com/nlohmann/json
 ///////////////////////////////////////////////////////////////
 
-
 //STL Libraries
 #include <iostream>
 #include <fstream>
 
 //JSON Library
 #include "nlohmann/json.hpp"
+
+//Custom Libraries
+#include "Polygon.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -36,6 +38,9 @@ int main()
             cout << val.value()["x"] << "|" << val.value()["y"] << endl;
         }
     }
+
+    //Testing Polygon object
+    auto testObject = new Polygon();
 
     //cout << dataAll["convex hulls"] << endl;
     cout << "There are " << dataAll["convex hulls"].size() << " polygons" << endl;
