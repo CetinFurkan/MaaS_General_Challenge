@@ -3,14 +3,22 @@
 #include <stack>
 #include "types.h"
 
-#define F_MAX 9999.9;
-#define F_MIN -9999.9;
+#define F_MAX 9999.9f;
+#define F_MIN -9999.9f;
 
 using namespace std;
 
 Point p0; //A variable needed for convexhull calculation
 
 namespace ch{
+/*
+enum CollisionResult{
+    NoCollision,     //No collision at all
+    PartlyCollision, //Only some part of the area is colliding with other area
+    FullyContaining  //One area is completely into another area
+};
+*/
+
 // A utility function to find next to top in a stack
 Point nextToTop(stack<Point> &S)
 {
@@ -80,7 +88,7 @@ bool onLine(Line l1, Point p)
 }
 
 // A utility function to check if two line intersects or not
-bool isIntersect(Line l1, Line l2)
+bool isLinesIntersecting(Line l1, Line l2)
 {
     // Four direction for two lines and points of other line
     int dir1 = orientation(l1.p1, l1.p2, l2.p1);
@@ -92,19 +100,19 @@ bool isIntersect(Line l1, Line l2)
     if (dir1 != dir2 && dir3 != dir4)
         return true;
  
-    // When p2 of line2 are on the line1
+    // When p1 of line2 are on the line1
     if (dir1 == 0 && onLine(l1, l2.p1))
         return true;
  
-    // When p1 of line2 are on the line1
+    // When p2 of line2 are on the line1
     if (dir2 == 0 && onLine(l1, l2.p2))
         return true;
  
-    // When p2 of line1 are on the line2
+    // When p1 of line1 are on the line2
     if (dir3 == 0 && onLine(l2, l1.p1))
         return true;
  
-    // When p1 of line1 are on the line2
+    // When p2 of line1 are on the line2
     if (dir4 == 0 && onLine(l2, l1.p2))
         return true;
  

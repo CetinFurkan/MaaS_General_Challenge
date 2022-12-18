@@ -40,11 +40,16 @@ int Polygon::pointsSize()
 void Polygon::clearPoints()
 {
     plist_.clear();
-    area_ = 0;
+    area_ = 0.0f;
     bbox_.p1.x = F_MAX;
     bbox_.p1.y = F_MAX;
     bbox_.p2.x = F_MIN;
     bbox_.p2.y = F_MIN;
+}
+
+float Polygon::getArea()
+{
+    return area_;
 }
 
 // Area calculation by using Shoelace formula
@@ -170,7 +175,7 @@ bool Polygon::isPointInside(Point p)
         Line side;
         side.p1 = getPointAt(i);
         side.p2 = getPointAt((i+1) % pointsSize());
-        if (ch::isIntersect(side, exline)) {
+        if (ch::isLinesIntersecting(side, exline)) {
  
             // If side is intersects exline
             if (ch::orientation(side.p1, p, side.p2) == 0)
@@ -184,12 +189,14 @@ bool Polygon::isPointInside(Point p)
     return count & 1;
 }
 
-// Function to check if a point is included
+// Function to check if polygon has a collision with other polygon
 bool Polygon::isCollidingWithPolygon(Polygon* other)
 {
-    if (pointsSize() < 3 || other->pointsSize() < 3)
+        //If polygons have no area, return
+    if (area_ == 0.0f || other->area_ == 0.0f)
         return false;
     
+    //Check collision of each line of polygon with other polygon's lines
     for (int i=0;i<pointsSize()-1;i++)
     {
         Line myLine;
@@ -201,9 +208,9 @@ bool Polygon::isCollidingWithPolygon(Polygon* other)
             otherLine.p1 = other->getPointAt(j);
             otherLine.p2 = other->getPointAt(j+1);
 
-            if (ch::isIntersect(myLine,otherLine))
+            if (ch::isLinesIntersecting(myLine,otherLine))
             {
-                cout << i << "|" << j << endl;
+                //cout << i << "|" << j << endl;
                 return true;
             }
         }       
@@ -215,8 +222,8 @@ bool Polygon::isCollidingWithPolygon(Polygon* other)
 // Function to check if a point is included
 bool Polygon::isCollidingWithPolygonFast(Polygon* other)
 {
-    //If polygons have some area
-    if (area_ == 0 || other->area_ == 0)
+    //If polygons have no area, return 
+    if (area_ == 0.0f || other->area_ == 0.0f)
         return false;
     
     if (ch::isCollidingRects(bbox_,other->bbox_))

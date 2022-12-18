@@ -16,6 +16,7 @@ public:
     Point getPointAt(int i);
     int pointsSize();
     void clearPoints();
+    float getArea();
 
     void createFromConvexHull(Point points[], int n);
     bool isPointInside(Point p);
@@ -24,7 +25,7 @@ public:
     
 private:
     std::vector<Point> plist_;
-    float area_;
+    float area_ = 0.0f;
     Rect bbox_;
 
     void calculateArea();
