@@ -19,17 +19,36 @@ void Polygon::appendPoint(float x, float y)
     Point p;
     p.x = x;
     p.y = y;
-    plist.push_back(p);
+    plist_.push_back(p);
 }
 
 Point Polygon::getPointAt(int i)
 {
-    return plist.at(i);
+    return plist_.at(i);
 }
 
 int Polygon::pointsSize()
 {
-    return plist.size();
+    return plist_.size();
+}
+
+// Area calculation by using Shoelace formula
+// https://www.geeksforgeeks.org/area-of-a-polygon-with-given-n-ordered-vertices/
+void Polygon::calculateArea()
+{
+    // Initialize area
+    float area = 0.0;
+ 
+    // Calculate value of shoelace formula
+    int j = pointsSize() - 1;
+    for (int i = 0; i < pointsSize(); i++)
+    {
+        area += (getPointAt(j).x + getPointAt(i).x) * (getPointAt(j).y - getPointAt(i).y);
+        j = i;  // j is previous vertex to i
+    }
+ 
+    // Set absolute value
+    area_ = abs(area / 2.0);
 }
 
 // Prints convex hull of a set of n points.
@@ -103,7 +122,7 @@ void Polygon::createFromConvexHull(Point points[], int n)
 
 	// Now stack has the boundry points of the polygon
     // They needed to be kept into plist vector
-	plist.clear();
+	plist_.clear();
     std::cout << "Polygon made of convex hull of the set: " << std::endl;
 
 	while (!S.empty())
@@ -115,4 +134,7 @@ void Polygon::createFromConvexHull(Point points[], int n)
 
 		S.pop();
 	}
+
+    calculateArea();
+    std::cout << "Polygon area: " << area_ << std::endl;
 }

@@ -20,9 +20,12 @@ public:
     int pointsSize();
 
     void createFromConvexHull(Point points[], int n);
-
+    
 private:
-    std::vector<Point> plist;
+    std::vector<Point> plist_;
+    float area_;
+
+    void calculateArea();
     
 };
 
