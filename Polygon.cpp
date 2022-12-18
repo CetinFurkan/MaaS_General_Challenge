@@ -210,11 +210,11 @@ bool Polygon::isPointInside(Point p)
 std::vector<Point> Polygon::isCollidingWithPolygon(Polygon* other)
 {
     // Initializes the vector for points
-    std::vector<Point> listCollision;
+    std::vector<Point> ret;
 
     // If polygons have no area, returns
     if (area_ == 0.0f || other->area_ == 0.0f)
-        return listCollision;
+        return ret;
     
     // Checks collision of each line of polygon with other polygon's lines
     for (int i=0;i<pointsSize();i++)
@@ -243,13 +243,13 @@ std::vector<Point> Polygon::isCollidingWithPolygon(Polygon* other)
             Point pp = ch::lineLineIntersection(myLine,otherLine); // Retruns {-9999,-9999} when no collision found
             if (pp.x != -9999) 
             {
-                listCollision.push_back(pp);
+                ret.push_back(pp);
                 //cout << i << " x " << j << " Point:" << pp.x << "," << pp.y << endl;
             }
         }       
     }
 
-    return listCollision;
+    return ret;
 }
 
 // Returns if polygon's bounding box has collision with other polygon's bounding box
@@ -264,3 +264,23 @@ bool Polygon::isCollidingWithPolygonFast(Polygon* other)
     
     return false;
 }
+
+//Returns list of points that are covered by another Polygon
+std::vector<Point> Polygon::allCoveredPoints(Polygon* other){
+
+    std::vector<Point> ret;
+
+    if (!other)
+        return ret;
+
+    if (getArea() == 0.0f || other->getArea() == 0.0f)
+        return ret;
+    
+    for (auto it = plist_.begin(); it != plist_.end(); it++){
+        if (other->isPointInside(*it))
+            ret.push_back(*it);
+    }
+
+    return ret;
+}
+

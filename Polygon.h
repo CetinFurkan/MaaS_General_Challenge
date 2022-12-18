@@ -21,6 +21,7 @@ public:
     bool isPointInside(Point p);
     std::vector<Point> isCollidingWithPolygon(Polygon* other); //Using actual polygon boundries
     bool isCollidingWithPolygonFast(Polygon* other); //Using bounding boxes
+    std::vector<Point> allCoveredPoints(Polygon* other);
 
 private:
     std::vector<Point> plist_;
