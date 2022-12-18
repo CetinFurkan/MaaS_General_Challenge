@@ -76,7 +76,7 @@ int main()
 		listPolygon.push_back(newPolygon);
     }
 
-	cout << "There are " << listPolygon.size() << " polygons loaded" << endl;
+	cout << endl << "There are " << listPolygon.size() << " polygons loaded" << endl;
 
     // Creates an array for keeping scores for collisions
     bool toBeRemovedLater[listPolygon.size()];
@@ -162,7 +162,7 @@ int main()
 
                 // STEP #4: Passes point data as an array to the Polygon object for convex hull algorithm
                 Point arrayPoints[pointsIntersection.size()];
-                cout << "TOTAL: "<< pointsIntersection.size() << "=" << collisionPoints.size() << endl;
+                //cout << "TOTAL: "<< pointsIntersection.size() << "=" << collisionPoints.size() << endl;
 
                 int k = 0;
                 for(Point pp : pointsIntersection) 
@@ -199,6 +199,7 @@ int main()
         j = i+1;
     }
 
+    cout << endl; 
     //Removes marked Polygons
     i=0;
     for (auto it = listPolygon.begin(); it != listPolygon.end(); )
@@ -214,7 +215,7 @@ int main()
         i++;
     }
 
-    cout << "There are " << listPolygon.size() << " polygons left" << endl;
+    cout << endl << "There are " << listPolygon.size() << " polygons left" << endl;
 
     // Printing into a new json file
     json outputJson;
@@ -232,10 +233,11 @@ int main()
         i++;
     }
 
-    std::ofstream o("data/convex_hull_uneliminated.json");
+    std::ofstream o("data/result_convex_hulls.json");
     o << std::setw(3) << outputJson << std::endl;
 
-    cout << "Printed to a file: " << "data/convex_hull_uneliminated.json" << endl;
+    cout << endl << "Printed into a file: data/result_convex_hulls.json" << endl;
 
+    o.close();
 	return 0;
 }
