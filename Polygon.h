@@ -4,10 +4,7 @@
 #include <stdlib.h>
 #include <vector>
 
-struct Point
-{
-	float x, y;
-};
+#include "types.h"
 
 class Polygon
 {
@@ -20,6 +17,7 @@ public:
     int pointsSize();
 
     void createFromConvexHull(Point points[], int n);
+    bool isPointInside(Point p);
     
 private:
     std::vector<Point> plist_;

@@ -138,3 +138,33 @@ void Polygon::createFromConvexHull(Point points[], int n)
     calculateArea();
     std::cout << "Polygon area: " << area_ << std::endl;
 }
+
+// A utility function to check if a point is 
+bool Polygon::isPointInside(Point p)
+{
+    // When polygon has less than 3 edge, it is not polygon
+    if (pointsSize() < 3)
+        return false;
+ 
+    // Create a point at infinity, y is same as point p
+    Line exline = { p, { 99999, p.y } };
+    int count = 0;
+    int i = 0;
+    do {
+        // Forming a line from two consecutive points of polygon
+        Line side;
+        side.p1 = getPointAt(i);
+        side.p2 = getPointAt((i+1) % pointsSize());
+        if (ch::isIntersect(side, exline)) {
+ 
+            // If side is intersects exline
+            if (ch::orientation(side.p1, p, side.p2) == 0)
+                return ch::onLine(side, p);
+            count++;
+        }
+        i = (i + 1) % pointsSize();
+    } while (i != 0);
+ 
+    // When count is odd
+    return count & 1;
+}

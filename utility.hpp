@@ -1,7 +1,7 @@
-#ifndef _UTILITY_
-#define _UTILITY_
+#pragma once
 
 #include <stack>
+#include "types.h"
 
 using namespace std;
 
@@ -64,5 +64,49 @@ int compare(const void *vp1, const void *vp2)
     return (o == 2)? -1: 1;
 }
 
+// A utility function to check if a point is on the line or not
+bool onLine(Line l1, Point p)
+{
+    if (p.x <= std::max(l1.p1.x, l1.p2.x)
+        && p.x <= std::min(l1.p1.x, l1.p2.x)
+        && (p.y <= std::max(l1.p1.y, l1.p2.y)
+            && p.y <= std::min(l1.p1.y, l1.p2.y)))
+        return true;
+ 
+    return false;
+}
+
+// A utility function to check if two line intersects or not
+bool isIntersect(Line l1, Line l2)
+{
+    // Four direction for two lines and points of other line
+    int dir1 = orientation(l1.p1, l1.p2, l2.p1);
+    int dir2 = orientation(l1.p1, l1.p2, l2.p2);
+    int dir3 = orientation(l2.p1, l2.p2, l1.p1);
+    int dir4 = orientation(l2.p1, l2.p2, l1.p2);
+ 
+    // When intersecting
+    if (dir1 != dir2 && dir3 != dir4)
+        return true;
+ 
+    // When p2 of line2 are on the line1
+    if (dir1 == 0 && onLine(l1, l2.p1))
+        return true;
+ 
+    // When p1 of line2 are on the line1
+    if (dir2 == 0 && onLine(l1, l2.p2))
+        return true;
+ 
+    // When p2 of line1 are on the line2
+    if (dir3 == 0 && onLine(l2, l1.p1))
+        return true;
+ 
+    // When p1 of line1 are on the line2
+    if (dir4 == 0 && onLine(l2, l1.p2))
+        return true;
+ 
+    return false;
+}
+
+
 }//ending namespace
-#endif //_UTILITY_

@@ -10,6 +10,8 @@
 ///////////////////////////////////////////////////////////////
 // Convex Hull using Graham Scan: https://www.geeksforgeeks.org/convex-hull-using-graham-scan/
 ///////////////////////////////////////////////////////////////
+// Algorithm for checking if a polygon contains a point: https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+///////////////////////////////////////////////////////////////
 
 //STL Libraries
 #include <iostream>
@@ -20,6 +22,7 @@
 #include "nlohmann/json.hpp"
 
 //Custom Libraries
+#include "types.h"
 #include "Polygon.h"
 
 using json = nlohmann::json;
