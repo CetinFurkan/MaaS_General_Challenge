@@ -24,7 +24,20 @@ int main()
 	ifstream strAll("data/convex_hulls (1).json");
     json dataAll = json::parse(strAll);
 
-    cout << dataAll["convex hulls"] << endl;
+    auto dataPolygons = dataAll.items().begin(); //Passing in JSON: "convex hull"
+
+    for (const auto& item : dataPolygons.value().items())
+    {
+		auto dataPoints = item.value().items().begin(); //Passing in JSON: "ID"
+		dataPoints++;									//Passing in JSON: "apexes"
+
+		for (const auto& val : dataPoints.value().items())
+        {
+            cout << val.value()["x"] << "|" << val.value()["y"] << endl;
+        }
+    }
+
+    //cout << dataAll["convex hulls"] << endl;
     cout << "There are " << dataAll["convex hulls"].size() << " polygons" << endl;
 
 }
