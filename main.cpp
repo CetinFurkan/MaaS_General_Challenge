@@ -3,14 +3,19 @@
 // Written by Furkan Cetin
 // 18/12/2022
 //
-// This code follows Google C++ Style Guide.
+// This code follows Google C++ Style Guide
+///////////////////////////////////////////////////////////////
+// JSON Parser library by Neils Lohmann: 
+// https://github.com/nlohmann/json
 //
-///////////////////////////////////////////////////////////////
-// JSON Parser library by Neils Lohmann: https://github.com/nlohmann/json
-///////////////////////////////////////////////////////////////
-// Convex Hull using Graham Scan: https://www.geeksforgeeks.org/convex-hull-using-graham-scan/
-///////////////////////////////////////////////////////////////
-// Algorithm for checking if a polygon contains a point: https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+// Convex Hull using Graham Scan: 
+// https://www.geeksforgeeks.org/convex-hull-using-graham-scan/
+//
+// Algorithm for checking if a polygon contains a point: 
+// https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+//
+// Area calculation by using Shoelace formula
+// https://www.geeksforgeeks.org/area-of-a-polygon-with-given-n-ordered-vertices/
 ///////////////////////////////////////////////////////////////
 
 //STL Libraries
@@ -30,7 +35,7 @@ using namespace std;
 
 int main()
 {
-	// Keeps all polygons in a vector
+	// Prepare a vector for keeping all Polygons
 	vector<Polygon*> listPolygon;
 
 	// Loads the json data in where the points data are loaded
@@ -49,6 +54,9 @@ int main()
 		for (const auto& val : dataPoints.value().items()){
 			sizePoints++;
 		}
+
+        if (sizePoints < 3)
+            continue;
 
 		// Combines all points into an array
 		Point pointData[sizePoints];
@@ -70,32 +78,32 @@ int main()
 
 	cout << "There are " << listPolygon.size() << " polygons loaded" << endl;
 
-    // Creates a scores for keeping collision numbers and setting to zeros
+    // Creates an array for keeping scores for collisions
     bool toBeRemovedLater[listPolygon.size()];
     for(int i=0;i< listPolygon.size(); i++)
         toBeRemovedLater[i] = false;
 
     // Checks colision of polygons with their bounding boxes (Bounding box collision is used for better performance)
-    
-    //for(int i=0; i< listPolygon.size()-1; i++)
-    int i = 0, j=1;
+    int i = 0, j = 1;
     for (auto it1 = listPolygon.begin(); it1 != listPolygon.end()-1; it1++)
     {
-        //for(int j=i+1; j< listPolygon.size(); j++)
         for (auto it2 = it1+1; it2 != listPolygon.end(); it2++)
         {
-            //cout << "Checking " << i << " vs " << j << ":" << endl;  
+            cout << "Checking " << i << " vs " << j << ":" << endl;  
             bool isBboxColliding = (*it1)->isCollidingWithPolygonFast(*it2);
 
             // CASE #0: No collision at all
             // Action: Continues scanning polygons
-            if (isBboxColliding == false) 
+            if (isBboxColliding == false){
+                j++;
                 continue;
+            } 
+                
 
             // Finds the intersecting points of polygons
             std::vector<Point> collisionPoints = (*it1)->isCollidingWithPolygon(*it2);
             bool isLineColliding = collisionPoints.size() > 0;
-            cout << "Result: " << i << " vs " << j << ": " << isLineColliding << "|" << isBboxColliding  << endl;
+            cout << "Collision detected: " << i << " vs " << j << " (" << isLineColliding << "|" << isBboxColliding  << ")"<< endl;
 
             // CASE #1: One polygon fully contains the other polygon (Polygons have no line collision but boundingbox)
             // Action: Removes the polygon with smaller area (which is %100 overlapped with other bigger polygon)
@@ -108,6 +116,7 @@ int main()
                 {
                     if ((*it2)->isPointInside((*it1)->getPointAt(0))) //Checks if it1 has any point within it2 polygon
                     {
+                        cout << "Polygon #" << i << " has %100 of its area overlapping"  << endl;
                         toBeRemovedLater[i] = true; //Marks the smaller polygon to be removed later
                     }
                 }
@@ -115,10 +124,12 @@ int main()
                 {
                     if ((*it1)->isPointInside((*it2)->getPointAt(0))) //Checks if it2 has any point within it1 polygon
                     {
+                        cout << "Polygon #" << j << " has %100 of its area overlapping"  << endl;
                         toBeRemovedLater[j] = true; //Marks the smaller polygon to be removed later
                     }
                 }
                 
+                j++;
                 continue;        
             }
 
@@ -151,7 +162,7 @@ int main()
 
                 // STEP #4: Passes point data as an array to the Polygon object for convex hull algorithm
                 Point arrayPoints[pointsIntersection.size()];
-                //cout << "TOTAL: "<< pointsIntersection.size() << "=" << collisionPoints.size() << endl;
+                cout << "TOTAL: "<< pointsIntersection.size() << "=" << collisionPoints.size() << endl;
 
                 int k = 0;
                 for(Point pp : pointsIntersection) 
@@ -170,11 +181,17 @@ int main()
                 float areaPolygon_j = (*it2)->getArea();
 
                 // Marks the polygon to be removed later if this area is at least %50 of the polygon 
-                if ( (areaIntersection/areaPolygon_i) > 0.5f)
+                if ( (areaIntersection/areaPolygon_i) > 0.5f){
+                    cout << "Polygon #" << i << " has %" << 100*(areaIntersection/areaPolygon_i) << " of its area overlapping"  << endl;
                     toBeRemovedLater[i] = true;
+                }
+                    
 
-                if ( (areaIntersection/areaPolygon_j) > 0.5f)
+                if ( (areaIntersection/areaPolygon_j) > 0.5f){
+                    cout << "Polygon #" << j << " has %" << 100*(areaIntersection/areaPolygon_j) << " of its area overlapping"  << endl;
                     toBeRemovedLater[j] = true;
+                }
+                    
             }
             j++;
         }
@@ -182,16 +199,13 @@ int main()
         j = i+1;
     }
 
-    for (auto it = listPolygon.begin(); it != listPolygon.end(); it++)
-        cout << (*it)->getArea() << endl;
-
     //Removes marked Polygons
     i=0;
     for (auto it = listPolygon.begin(); it != listPolygon.end(); )
     {
-        cout << toBeRemovedLater[i] << endl;
         if (toBeRemovedLater[i])
         {
+            cout << "Deleting Polygon #" << i << endl;
             listPolygon.erase(it);
         }
         else
@@ -200,12 +214,7 @@ int main()
         i++;
     }
 
-
-
     cout << "There are " << listPolygon.size() << " polygons left" << endl;
-
-    for (auto it = listPolygon.begin(); it != listPolygon.end(); it++)
-        cout << (*it)->getArea() << endl;
 
     // Printing into a new json file
     json outputJson;
@@ -225,6 +234,8 @@ int main()
 
     std::ofstream o("data/convex_hull_uneliminated.json");
     o << std::setw(3) << outputJson << std::endl;
+
+    cout << "Printed to a file: " << "data/convex_hull_uneliminated.json" << endl;
 
 	return 0;
 }

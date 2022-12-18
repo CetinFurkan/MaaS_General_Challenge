@@ -25,6 +25,7 @@ public:
 
 private:
     std::vector<Point> plist_;
+    int pointsize_ = 0;
     float area_ = 0.0f;
     Rect bbox_;
 

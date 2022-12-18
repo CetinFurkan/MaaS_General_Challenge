@@ -20,6 +20,7 @@ void Polygon::appendPoint(float x, float y)
     p.x = x;
     p.y = y;
     plist_.push_back(p);
+    pointsize_++;
 
     bbox_.p1.x = std::min(bbox_.p1.x , x);
     bbox_.p1.y = std::min(bbox_.p1.y , y);
@@ -39,12 +40,13 @@ Point Polygon::getPointAt(int i)
 
 int Polygon::pointsSize()
 {
-    return plist_.size();
+    return pointsize_;
 }
 
 void Polygon::clearPoints()
 {
     plist_.clear();
+    pointsize_ = 0;
     area_ = 0.0f;
     bbox_.p1.x = F_MAX;
     bbox_.p1.y = F_MAX;
@@ -57,10 +59,12 @@ float Polygon::getArea()
     return area_;
 }
 
-// Area calculation by using Shoelace formula
-// https://www.geeksforgeeks.org/area-of-a-polygon-with-given-n-ordered-vertices/
+//Returns the area of the polygon
 void Polygon::calculateArea()
 {
+    if (pointsSize()< 3)
+        return;
+
     // Initialize area
     float area = 0.0;
  
@@ -79,6 +83,9 @@ void Polygon::calculateArea()
 // Prints convex hull of a set of n points.
 void Polygon::createFromConvexHull(Point points[], int n)
 {
+    if (n == 0)
+        return;
+
     //PROCESSING CODE GENERATOR FOR DEBUGGING:
     /*
     cout << "stroke(0,0,0);" << endl;
@@ -212,8 +219,11 @@ std::vector<Point> Polygon::isCollidingWithPolygon(Polygon* other)
     // Initializes the vector for points
     std::vector<Point> ret;
 
-    // If polygons have no area, returns
-    if (area_ == 0.0f || other->area_ == 0.0f)
+    if (!other)
+        return ret;
+
+    // If polygons are not valid, returns
+    if (pointsSize() < 3|| other->pointsSize() < 3)
         return ret;
     
     // Checks collision of each line of polygon with other polygon's lines
@@ -255,7 +265,10 @@ std::vector<Point> Polygon::isCollidingWithPolygon(Polygon* other)
 // Returns if polygon's bounding box has collision with other polygon's bounding box
 bool Polygon::isCollidingWithPolygonFast(Polygon* other)
 {
-    // If polygons have no area, returns
+    if (!other)
+        return false;
+
+    // If polygons are not valid, returns
     if (area_ == 0.0f || other->area_ == 0.0f)
         return false;
     
@@ -273,7 +286,7 @@ std::vector<Point> Polygon::allCoveredPoints(Polygon* other){
     if (!other)
         return ret;
 
-    if (getArea() == 0.0f || other->getArea() == 0.0f)
+    if (pointsSize() < 3 || other->pointsSize() < 3)
         return ret;
     
     for (auto it = plist_.begin(); it != plist_.end(); it++){
