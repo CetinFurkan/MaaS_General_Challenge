@@ -95,11 +95,22 @@ int main()
             // Action: Remove the polygon with smaller area (which is %100 overlapped with other bigger polygon)
             if (collisionBbox && !collisionLines)
             {
+                int polySmaller = j;
+                int polyBigger = i;
                 if (listPolygon.at(i)->getArea() < listPolygon.at(j)->getArea())
-                    toBeRemovedLater[i] = true;
-                else
-                    toBeRemovedLater[j] = true;
-
+                {
+                    polySmaller = i;
+                    polyBigger = j;
+                }
+                    
+                // IMPORTANT NOTE: There is exceptional cases where the smaller polygon would be completely outside of the bigger polygon
+                // yet they could have colliding bounding boxes
+                // There should be checking if at least one point is inside of the bigger polygon or not
+                if (listPolygon.at(polyBigger)->isPointInside(listPolygon.at(polySmaller)->getPointAt(0)))
+                {
+                    toBeRemovedLater[polySmaller] = true; //Mark smaller polygon to be removed later
+                }
+                    
                 continue;        
             }
 
