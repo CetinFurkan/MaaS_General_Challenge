@@ -169,25 +169,17 @@ int main()
 
                 if ( (areaCrossection/areaPolygon_j) > 0.5f)
                     toBeRemovedLater[j] = true;
-
             }
         }
     }
 
-    for(int i=0;i< listPolygon.size(); i++)
-    {
-        cout << listPolygon.at(i)->getArea() << " " << toBeRemovedLater[i] << endl;
-    }
-
-    cout << "  " << endl;
-
+    //Removes marked Polygons
     int i=0;
-    for (auto it = listPolygon.begin(); it != listPolygon.end(); ){
-        
+    for (auto it = listPolygon.begin(); it != listPolygon.end(); )
+    {
         if (toBeRemovedLater[i])
         {
             listPolygon.erase(it);
-            
         }
         else
             it++;
@@ -195,10 +187,29 @@ int main()
         i++;
     }
 
-    for(int i=0;i< listPolygon.size(); i++)
+    cout << "There are " << listPolygon.size() << " polygons left" << endl;
+
+
+    //Printing into new json file
+
+    json outputJson;
+
+    
+    i = 0;
+    for (auto it = listPolygon.begin(); it != listPolygon.end(); it++)
     {
-        cout << listPolygon.at(i)->getArea() << endl;
+        outputJson["convex hulls"][i]["ID"] = i;
+
+        for (int j = 0; j < (*it)->pointsSize(); j++){
+            outputJson["convex hulls"][i]["apexes"][j]["x"] = (*it)->getPointAt(j).x;
+            outputJson["convex hulls"][i]["apexes"][j]["y"] = (*it)->getPointAt(j).y;
+        }
+
+        i++;
     }
+
+    std::ofstream o("data/convex_hull_uneliminated.json");
+    o << std::setw(3) << outputJson << std::endl;
 
 	return 0;
 }
