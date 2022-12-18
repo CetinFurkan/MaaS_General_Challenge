@@ -12,7 +12,6 @@ public:
     Polygon();
     ~Polygon();
 
-    void appendPoint(float x, float y);
     Point getPointAt(int i);
     int pointsSize();
     void clearPoints();
@@ -20,16 +19,17 @@ public:
 
     void createFromConvexHull(Point points[], int n);
     bool isPointInside(Point p);
-    bool isCollidingWithPolygon(Polygon* other); //Using actual polygon boundries
+    std::vector<Point> isCollidingWithPolygon(Polygon* other); //Using actual polygon boundries
     bool isCollidingWithPolygonFast(Polygon* other); //Using bounding boxes
-    
+
 private:
     std::vector<Point> plist_;
     float area_ = 0.0f;
     Rect bbox_;
 
     void calculateArea();
-    
+    void appendPoint(float x, float y);
+    void appendPoint(Point p);
 };
 
 #endif //_POLYGON_

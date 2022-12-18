@@ -11,15 +11,7 @@ using namespace std;
 Point p0; //A variable needed for convexhull calculation
 
 namespace ch{
-/*
-enum CollisionResult{
-    NoCollision,     //No collision at all
-    PartlyCollision, //Only some part of the area is colliding with other area
-    FullyContaining  //One area is completely into another area
-};
-*/
-
-// A utility function to find next to top in a stack
+// Finds next to top in a stack
 Point nextToTop(stack<Point> &S)
 {
 	Point p = S.top();
@@ -29,7 +21,7 @@ Point nextToTop(stack<Point> &S)
 	return res;
 }
 
-// A utility function to swap two points
+// Swaps two points
 void swap(Point &p1, Point &p2)
 {
 	Point temp = p1;
@@ -37,15 +29,14 @@ void swap(Point &p1, Point &p2)
 	p2 = temp;
 }
 
-// A utility function to return square of distance
-// between p1 and p2
+// Retruns square of distance between p1 and p2
 int distSq(Point p1, Point p2)
 {
 	return (p1.x - p2.x)*(p1.x - p2.x) +
 		(p1.y - p2.y)*(p1.y - p2.y);
 }
 
-// To find orientation of ordered triplet (p, q, r).
+// Finds the orientation of ordered triplet (p, q, r).
 // The function returns following values
 // 0 --> p, q and r are collinear
 // 1 --> Clockwise
@@ -75,7 +66,7 @@ int compare(const void *vp1, const void *vp2)
     return (o == 2)? -1: 1;
 }
 
-// A utility function to check if a point is on the line or not
+// Retruns if a point is on the line or not
 bool onLine(Line l1, Point p)
 {
     if (p.x <= std::max(l1.p1.x, l1.p2.x)
@@ -87,10 +78,40 @@ bool onLine(Line l1, Point p)
     return false;
 }
 
-// A utility function to check if two line intersects or not
-bool isLinesIntersecting(Line l1, Line l2)
+// Returns the intersecting point if two line intersects
+Point lineLineIntersection(Line l1, Line l2)
 {
-    // Four direction for two lines and points of other line
+    // Stores the values for fast access and easy equations-to-code conversion
+    float x1 = l1.p1.x, x2 = l1.p2.x, x3 = l2.p1.x, x4 = l2.p2.x;
+    float y1 = l1.p1.y, y2 = l1.p2.y, y3 = l2.p1.y, y4 = l2.p2.y;
+    
+    float d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    
+    // If determinant is zero, there is no intersection
+    if (d == 0) 
+        return Point{-9999,-9999};
+    
+    // Gets the x and y
+    float pre = (x1*y2 - y1*x2);
+    float post = (x3*y4 - y3*x4);
+    float x = ( pre * (x3 - x4) - (x1 - x2) * post ) / d;
+    float y = ( pre * (y3 - y4) - (y1 - y2) * post ) / d;
+    
+    // Checks if the x and y coordinates are within both lines
+    if ( x < min(x1, x2) || x > max(x1, x2) || x < min(x3, x4) || x > max(x3, x4) ) 
+        return Point{-9999,-9999};
+
+    if ( y < min(y1, y2) || y > max(y1, y2) || y < min(y3, y4) || y > max(y3, y4) ) 
+        return Point{-9999,-9999};
+    
+    // Returns the point of intersection
+    return Point{x,y};
+
+}
+
+// Returns if two lines intersect
+bool isLinesIntersecting(Line l1, Line l2){
+        // Four direction for two lines and points of other line
     int dir1 = orientation(l1.p1, l1.p2, l2.p1);
     int dir2 = orientation(l1.p1, l1.p2, l2.p2);
     int dir3 = orientation(l2.p1, l2.p2, l1.p1);
@@ -100,52 +121,23 @@ bool isLinesIntersecting(Line l1, Line l2)
     if (dir1 != dir2 && dir3 != dir4)
         return true;
  
-    // When p1 of line2 are on the line1
+    // When p2 of line2 are on the line1
     if (dir1 == 0 && onLine(l1, l2.p1))
         return true;
  
-    // When p2 of line2 are on the line1
+    // When p1 of line2 are on the line1
     if (dir2 == 0 && onLine(l1, l2.p2))
         return true;
  
-    // When p1 of line1 are on the line2
+    // When p2 of line1 are on the line2
     if (dir3 == 0 && onLine(l2, l1.p1))
         return true;
  
-    // When p2 of line1 are on the line2
+    // When p1 of line1 are on the line2
     if (dir4 == 0 && onLine(l2, l1.p2))
         return true;
  
     return false;
-}
-
-// A utility function to check if two line intersects or not
-Point lineLineIntersection(Line l1, Line l2)
-{
-    // Line AB represented as a1x + b1y = c1
-    float a1 = l1.p2.y - l1.p1.y;
-    float b1 = l1.p1.x - l1.p2.x;
-    float c1 = a1*(l1.p1.x) + b1*(l1.p1.y);
- 
-    // Line CD represented as a2x + b2y = c2
-    float a2 = l2.p2.y - l2.p1.y;
-    float b2 = l2.p1.x - l2.p2.x;
-    float c2 = a2*(l2.p1.x)+ b2*(l2.p1.y);
- 
-    float determinant = a1*b2 - a2*b1;
- 
-    if (determinant == 0)
-    {
-        // The lines are parallel. This is simplified
-        // by returning a pair of long numbers
-        return Point{-9999,-9999};
-    }
-    else
-    {
-        float x = (b2*c1 - b1*c2)/determinant;
-        float y = (a1*c2 - a2*c1)/determinant;
-        return Point{x,y};
-    }
 }
 
 bool isInside(Point p, Rect r){
@@ -169,4 +161,4 @@ bool isCollidingRects(Rect r1, Rect r2){
     return true;
 }
 
-}//ending namespace
+}//ending namespace "ch"
