@@ -41,6 +41,11 @@ int main()
 
     //Testing Polygon object
     auto testObject = new Polygon();
+    testObject->appendPoint(12.3,45.6);
+    testObject->appendPoint(00.6,99.8);
+    cout << testObject->pointsSize() << endl;
+    cout << testObject->getPointAt(1).x << "," << testObject->getPointAt(1).y << endl;
+        
 
     //cout << dataAll["convex hulls"] << endl;
     cout << "There are " << dataAll["convex hulls"].size() << " polygons" << endl;
