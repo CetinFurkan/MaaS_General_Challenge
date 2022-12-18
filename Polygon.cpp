@@ -185,31 +185,39 @@ void Polygon::createFromConvexHull(Point points[], int n)
 // Returns if a point is included by polygon
 bool Polygon::isPointInside(Point p)
 {
-    // When polygon has less than 3 edge, it is not polygon
-    if (pointsSize() < 3)
-        return false;
- 
-    // Creates a point at infinity, y is same as point p
-    Line exline = { p, { 99999, p.y } };
-    int count = 0;
-    int i = 0;
-    do {
-        // Forms a line from two consecutive points of polygon
-        Line side;
-        side.p1 = getPointAt(i);
-        side.p2 = getPointAt((i+1) % pointsSize());
-        if (ch::isLinesIntersecting(side, exline)) {
- 
-            // If side is intersects exline
-            if (ch::orientation(side.p1, p, side.p2) == 0)
-                return ch::onLine(side, p);
-            count++;
+    int counter = 0;
+    int i;
+    float xinters;
+    Point p1,p2;
+
+    p1 = getPointAt(0);
+
+    for (i=1;i<=pointsize_;i++) 
+    {
+        p2 = getPointAt(i % pointsize_);
+        
+        if (p.y > std::min(p1.y,p2.y)) 
+        {
+            if (p.y <= std::max(p1.y,p2.y)) 
+            {
+                if (p.x <= std::max(p1.x,p2.x)) 
+                {
+                    if (p1.y != p2.y) 
+                    {
+                        xinters = (p.y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
+                        if (p1.x == p2.x || p.x <= xinters)
+                            counter++;
+                    }
+                }
+            }
         }
-        i = (i + 1) % pointsSize();
-    } while (i != 0);
- 
-    // When count is odd
-    return count & 1;
+        p1 = p2;
+    }
+
+    if (counter % 2 == 0)
+        return false;
+    else
+        return true;
 }
 
 // Returns collision points if polygon boundry has a collision with other polygon's boundry

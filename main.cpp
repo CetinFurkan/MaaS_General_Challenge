@@ -12,7 +12,7 @@
 // https://www.geeksforgeeks.org/convex-hull-using-graham-scan/
 //
 // Algorithm for checking if a polygon contains a point: 
-// https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+// https://www.eecs.umich.edu/courses/eecs380/HANDOUTS/PROJ2/InsidePoly.html
 //
 // Area calculation by using Shoelace formula
 // https://www.geeksforgeeks.org/area-of-a-polygon-with-given-n-ordered-vertices/

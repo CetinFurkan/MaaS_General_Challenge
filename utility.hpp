@@ -78,7 +78,7 @@ bool onLine(Line l1, Point p)
     return false;
 }
 
-// Returns the intersecting point if two line intersects
+// Returns the intersecting point of two lines
 Point lineLineIntersection(Line l1, Line l2)
 {
     // Stores the values for fast access and easy equations-to-code conversion
@@ -140,6 +140,7 @@ bool isLinesIntersecting(Line l1, Line l2){
     return false;
 }
 
+//Returns if a point is inside of a rectangle area
 bool isInside(Point p, Rect r){
     if (p.x >= r.p1.x && p.x <= r.p2.x )
         if (p.y >= r.p1.y && p.y <= r.p2.y )
@@ -148,6 +149,7 @@ bool isInside(Point p, Rect r){
     return false;
 }
 
+//Returns if a rectangle has a collision with another rectangle
 bool isCollidingRects(Rect r1, Rect r2){
 
     // If one rectangle is on left side of other
