@@ -3,6 +3,9 @@
 #include <stack>
 #include "types.h"
 
+#define F_MAX 9999.9;
+#define F_MIN -9999.9;
+
 using namespace std;
 
 Point p0; //A variable needed for convexhull calculation
@@ -108,5 +111,54 @@ bool isIntersect(Line l1, Line l2)
     return false;
 }
 
+// A utility function to check if two line intersects or not
+Point lineLineIntersection(Line l1, Line l2)
+{
+    // Line AB represented as a1x + b1y = c1
+    float a1 = l1.p2.y - l1.p1.y;
+    float b1 = l1.p1.x - l1.p2.x;
+    float c1 = a1*(l1.p1.x) + b1*(l1.p1.y);
+ 
+    // Line CD represented as a2x + b2y = c2
+    float a2 = l2.p2.y - l2.p1.y;
+    float b2 = l2.p1.x - l2.p2.x;
+    float c2 = a2*(l2.p1.x)+ b2*(l2.p1.y);
+ 
+    float determinant = a1*b2 - a2*b1;
+ 
+    if (determinant == 0)
+    {
+        // The lines are parallel. This is simplified
+        // by returning a pair of long numbers
+        return Point{-9999,-9999};
+    }
+    else
+    {
+        float x = (b2*c1 - b1*c2)/determinant;
+        float y = (a1*c2 - a2*c1)/determinant;
+        return Point{x,y};
+    }
+}
+
+bool isInside(Point p, Rect r){
+    if (p.x >= r.p1.x && p.x <= r.p2.x )
+        if (p.y >= r.p1.y && p.y <= r.p2.y )
+            return true;
+
+    return false;
+}
+
+bool isCollidingRects(Rect r1, Rect r2){
+
+    // If one rectangle is on left side of other
+    if (r1.p1.x > r2.p2.x || r2.p1.x > r1.p2.x)
+        return false;
+ 
+    // If one rectangle is above other
+    if (r1.p1.y > r2.p2.y || r2.p1.y > r1.p2.y)
+        return false;
+
+    return true;
+}
 
 }//ending namespace

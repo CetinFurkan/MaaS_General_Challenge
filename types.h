@@ -9,3 +9,8 @@ struct Line
 {
     Point p1, p2;
 };
+
+struct Rect 
+{
+    Point p1, p2;
+};

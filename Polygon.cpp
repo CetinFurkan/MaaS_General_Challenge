@@ -6,7 +6,7 @@
 
 Polygon::Polygon()
 {
-
+    clearPoints();
 }
 
 Polygon::~Polygon()
@@ -20,6 +20,11 @@ void Polygon::appendPoint(float x, float y)
     p.x = x;
     p.y = y;
     plist_.push_back(p);
+
+    bbox_.p1.x = std::min(bbox_.p1.x , x);
+    bbox_.p1.y = std::min(bbox_.p1.y , y);
+    bbox_.p2.x = std::max(bbox_.p2.x , x);
+    bbox_.p2.y = std::max(bbox_.p2.y , y);
 }
 
 Point Polygon::getPointAt(int i)
@@ -30,6 +35,16 @@ Point Polygon::getPointAt(int i)
 int Polygon::pointsSize()
 {
     return plist_.size();
+}
+
+void Polygon::clearPoints()
+{
+    plist_.clear();
+    area_ = 0;
+    bbox_.p1.x = F_MAX;
+    bbox_.p1.y = F_MAX;
+    bbox_.p2.x = F_MIN;
+    bbox_.p2.y = F_MIN;
 }
 
 // Area calculation by using Shoelace formula
@@ -122,14 +137,14 @@ void Polygon::createFromConvexHull(Point points[], int n)
 
 	// Now stack has the boundry points of the polygon
     // They needed to be kept into plist vector
-	plist_.clear();
-    std::cout << "Polygon made of convex hull of the set: " << std::endl;
+	clearPoints();
+    //std::cout << "Polygon made of convex hull of the set: " << std::endl;
 
 	while (!S.empty())
 	{
 		Point p = S.top();
 
-        std::cout << "(" << p.x << ", " << p.y <<")" << std::endl;
+        //std::cout << "(" << p.x << ", " << p.y <<")" << std::endl;
         appendPoint(p.x,p.y);
 
 		S.pop();
@@ -139,7 +154,7 @@ void Polygon::createFromConvexHull(Point points[], int n)
     std::cout << "Polygon area: " << area_ << std::endl;
 }
 
-// A utility function to check if a point is 
+// Function to check if a point is included
 bool Polygon::isPointInside(Point p)
 {
     // When polygon has less than 3 edge, it is not polygon
@@ -168,3 +183,47 @@ bool Polygon::isPointInside(Point p)
     // When count is odd
     return count & 1;
 }
+
+// Function to check if a point is included
+bool Polygon::isCollidingWithPolygon(Polygon* other)
+{
+    if (pointsSize() < 3 || other->pointsSize() < 3)
+        return false;
+    
+    for (int i=0;i<pointsSize()-1;i++)
+    {
+        Line myLine;
+        myLine.p1 = getPointAt(i);
+        myLine.p2 = getPointAt(i+1);
+
+        for (int j=0;j<other->pointsSize()-1;j++){
+            Line otherLine;
+            otherLine.p1 = other->getPointAt(j);
+            otherLine.p2 = other->getPointAt(j+1);
+
+            if (ch::isIntersect(myLine,otherLine))
+            {
+                cout << i << "|" << j << endl;
+                return true;
+            }
+        }       
+    }
+
+    return false;
+}
+
+// Function to check if a point is included
+bool Polygon::isCollidingWithPolygonFast(Polygon* other)
+{
+    //If polygons have some area
+    if (area_ == 0 || other->area_ == 0)
+        return false;
+    
+    if (ch::isCollidingRects(bbox_,other->bbox_))
+        return true;
+    
+    return false;
+}
+
+
+

@@ -70,5 +70,28 @@ int main()
 
 	cout << "There are " << listPolygon.size() << " polygons loaded" << endl;
 
+    // Creating a score array and setting to zeros
+    int collideScores[listPolygon.size()];
+    for(int i=0;i< listPolygon.size(); i++)
+        collideScores[i] = 0;
+
+    //Checking each polygon with their Bounding Boxes
+    //Used for better improvement
+    for(int i=0;i< listPolygon.size()-1; i++)
+    {
+        for(int j=i+1;j< listPolygon.size(); j++)
+        {
+            //cout << "Checking " << i << " vs " << j << ":" << endl;
+            if (listPolygon.at(i)->isCollidingWithPolygonFast(listPolygon.at(j)))
+            {
+                collideScores[i]++;
+                collideScores[j]++;
+            }  
+        }
+    }
+
+    for(int i=0;i< listPolygon.size(); i++)
+        cout << "Score of " << i << ":" << collideScores[i] << endl;
+
 	return 0;
 }
