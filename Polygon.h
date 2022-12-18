@@ -8,7 +8,7 @@ struct Point
 {
 	float x, y;
 };
- 
+
 class Polygon
 {
 public:
@@ -19,8 +19,11 @@ public:
     Point getPointAt(int i);
     int pointsSize();
 
+    void createFromConvexHull(Point points[], int n);
+
 private:
-    std::vector<Point> plist_; //List of points of polygon boundry!
+    std::vector<Point> plist;
+    
 };
 
 #endif //_POLYGON_
