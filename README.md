@@ -23,6 +23,9 @@ Created by Furkan Çetin on 18/12/2022
 - Select **Run > Run** without Debugging
 - Now you will get an output json file and console output on Visual Studio Code Terminal
 
+#### Troubleshooting:
+If you get compile errors, be sure that you have copied **tasks.json** file in the folder **.vscode** 
+
 ### BONUS: Processing Visualisation Steps:
 In order to see point data and the polygons, I created a Java application with [Processing4](https://processing.org/download)
 - Install **Processing** and run it
